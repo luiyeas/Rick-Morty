@@ -1,5 +1,7 @@
 package com.lnavarro.rickmorty.domain.model
 
+import com.lnavarro.rickmorty.ui.model.CharacterUI
+
 data class CharacterDomain(
     val id: Int,
     val name: String,
@@ -11,3 +13,7 @@ data class CharacterDomain(
     val image: String,
     val episodesCount: Int
 )
+
+
+fun CharacterDomain.toUI(): CharacterUI =
+    CharacterUI(id = id, name = name, status = status, species = species, image = image)
