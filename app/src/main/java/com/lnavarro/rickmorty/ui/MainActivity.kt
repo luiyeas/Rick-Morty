@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.lnavarro.rickmorty.ui.components.AppTopBar
 import com.lnavarro.rickmorty.ui.screens.characterlist.CharacterListScreen
 import com.lnavarro.rickmorty.ui.screens.characterlist.CharacterListViewModel
 import com.lnavarro.rickmorty.ui.theme.RickAndMortyCatalogTheme
@@ -25,8 +26,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RickAndMortyCatalogTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CharacterListScreen(modifier = Modifier.padding(innerPadding), characterListViewModel = taskListViewModel)
+                Scaffold(topBar = {
+                    AppTopBar(title = "I don't know Rick...")
+                }, modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    CharacterListScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        characterListViewModel = taskListViewModel
+                    )
                 }
             }
         }
