@@ -88,10 +88,9 @@ fun CharacterCard(characterUI: CharacterUI) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "",
-                        modifier = Modifier.size(16.dp)
+                    Text(
+                        text = getKindOfLive(characterUI.species),
+                        fontSize = 14.sp
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
@@ -117,5 +116,14 @@ fun getStatusColor(status: String): Color {
         "alive" -> Color.Green
         "dead" -> Color.Red
         else -> Color.Gray
+    }
+}
+
+@Composable
+fun getKindOfLive(status: String): String {
+    return when (status.lowercase()) {
+        "human" -> "👽"
+        "alien" -> "🧑"
+        else -> "🔮"
     }
 }
