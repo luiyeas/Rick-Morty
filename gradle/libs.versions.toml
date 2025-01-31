@@ -12,7 +12,10 @@ hilt = "2.48"
 retrofitVersion = "2.11.0"
 coilVersion = "3.0.4"
 paging = "3.2.1"
-
+mockk = "1.13.4"
+turbine = "0.12.1"
+coroutines-test = "1.7.1"
+hilt-test = "2.44"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +48,13 @@ coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", versi
 # Paging
 paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
+hilt-test = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt-test" }
+
 
 
 [plugins]
