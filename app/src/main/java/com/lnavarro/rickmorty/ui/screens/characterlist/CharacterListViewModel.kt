@@ -2,39 +2,25 @@ package com.lnavarro.rickmorty.ui.screens.characterlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.lnavarro.rickmorty.domain.model.toUI
 import com.lnavarro.rickmorty.domain.usecase.GetCharactersUseCase
+import com.lnavarro.rickmorty.ui.model.CharacterUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class CharacterListViewModel @Inject constructor(
-    private val getCharactersUseCase: GetCharactersUseCase
+    getCharactersUseCase: GetCharactersUseCase
 ) : ViewModel() {
 
     // UI State with sealed class
-    private val _uiState = MutableStateFlow<CharacterListState>(CharacterListState.Loading)
-    val uiState: StateFlow<CharacterListState> = _uiState.asStateFlow()
-
-    init {
-        loadCharacters(0)
-    }
-
-    private fun loadCharacters(page: Int) {
-        viewModelScope.launch {
-            _uiState.value = CharacterListState.Loading
-            getCharactersUseCase(page).collect { result ->
-                _uiState.value = if (result.isEmpty()) {
-                    CharacterListState.Error("Error loading characters.")
-                } else {
-                    CharacterListState.Success(result.map { it.toUI() })
-                }
-            }
-        }
-    }
+    val characters: Flow<PagingData<CharacterUI>> =
+        getCharactersUseCase().map { pagingData -> pagingData.map { it.toUI() } }
+            .cachedIn(viewModelScope)
 
 }

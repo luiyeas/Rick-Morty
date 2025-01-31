@@ -11,6 +11,7 @@ composeBom = "2025.01.00"
 hilt = "2.48"
 retrofitVersion = "2.11.0"
 coilVersion = "3.0.4"
+paging = "3.2.1"
 
 
 [libraries]
@@ -40,6 +41,10 @@ retrofit-converter = { group = "com.squareup.retrofit2", name = "converter-gson"
 # Coil
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coilVersion" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilVersion" }
+
+# Paging
+paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 
 [plugins]

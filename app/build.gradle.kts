@@ -57,6 +57,8 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.retrofit.android)
     implementation(libs.retrofit.converter)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
