@@ -13,15 +13,18 @@ import javax.inject.Singleton
 @Singleton
 class CharacterRepository @Inject constructor(private val apiService: RickAndMortyApiClient) {
 
+    companion object PagingConstants {
+        const val PAGE_SIZE = 20
+        const val PREFETCH_DISTANCE = 5
+    }
+
+    val pagingConfig = PagingConfig(
+        pageSize = PAGE_SIZE, prefetchDistance = PREFETCH_DISTANCE, enablePlaceholders = false
+    )
+
     fun getCharactersPaged(): Flow<PagingData<CharacterDomain>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                prefetchDistance = 5,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { CharacterPagingSource(apiService) }
-        ).flow
+        return Pager(config = pagingConfig,
+            pagingSourceFactory = { CharacterPagingSource(apiService) }).flow
     }
 
 }
