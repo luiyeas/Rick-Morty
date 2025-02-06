@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">RickAndMortyCatalog</string>
+    <string name="filter_button_human">🧑 Human</string>
+    <string name="filter_button_humanoid">👻 Humanoid</string>
+    <string name="filter_button_alien">👽 Alien</string>
+    <string name="filter_button_unknown">🔮 Unknown</string>
+    <string name="retry_text">Reintentar</string>
 </resources>

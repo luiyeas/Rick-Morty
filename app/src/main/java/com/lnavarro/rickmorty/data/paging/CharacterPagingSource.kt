@@ -7,13 +7,15 @@ import com.lnavarro.rickmorty.data.network.RickAndMortyApiClient
 import com.lnavarro.rickmorty.domain.model.CharacterDomain
 import javax.inject.Inject
 
-class CharacterPagingSource @Inject constructor(private val apiService: RickAndMortyApiClient) :
+class CharacterPagingSource @Inject constructor(
+    private val apiService: RickAndMortyApiClient,
+    private val status: String?) :
     PagingSource<Int, CharacterDomain>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CharacterDomain> {
         return try {
             val page = params.key ?: 1
-            val response = apiService.getAllCharacters(page)
+            val response = apiService.getAllCharacters(page, status)
             val characters = response.characters.map { it.toDomain() }
             LoadResult.Page(
                 data = characters,

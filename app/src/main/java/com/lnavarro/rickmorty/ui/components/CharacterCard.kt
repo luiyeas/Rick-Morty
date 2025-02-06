@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.lnavarro.rickmorty.R
+import com.lnavarro.rickmorty.domain.model.CharacterSpecies
 import com.lnavarro.rickmorty.ui.model.CharacterUI
 import com.lnavarro.rickmorty.ui.theme.SecondaryText
 
@@ -94,7 +92,7 @@ fun CharacterCard(characterUI: CharacterUI) {
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = characterUI.species,
+                        text = characterUI.species.value,
                         fontSize = 8.sp,
                         fontFamily = pixelFont,
                         color = SecondaryText,
@@ -120,10 +118,12 @@ fun getStatusColor(status: String): Color {
 }
 
 @Composable
-fun getKindOfLive(status: String): String {
-    return when (status.lowercase()) {
-        "human" -> "👽"
-        "alien" -> "🧑"
-        else -> "🔮"
+fun getKindOfLive(species: CharacterSpecies): String {
+    return when (species) {
+        CharacterSpecies.ALIEN -> "👽"
+        CharacterSpecies.HUMAN -> "🧑"
+        CharacterSpecies.HUMANOID -> "👻"
+        CharacterSpecies.UNKNOWN -> "🔮"
+
     }
 }

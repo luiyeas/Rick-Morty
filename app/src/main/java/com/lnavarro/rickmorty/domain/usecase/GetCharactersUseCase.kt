@@ -6,9 +6,10 @@ import com.lnavarro.rickmorty.domain.model.CharacterDomain
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetCharactersUseCase @Inject constructor(private val repository: CharacterRepository
+class GetCharactersUseCase @Inject constructor(
+    private val repository: CharacterRepository
 ) {
-    operator fun invoke(): Flow<PagingData<CharacterDomain>> {
-        return repository.getCharactersPaged()
+    operator fun invoke(status: String?): Flow<PagingData<CharacterDomain>> {
+        return repository.getCharactersPaged(status)
     }
 }

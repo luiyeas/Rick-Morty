@@ -2,6 +2,7 @@ package com.lnavarro.rickmorty.data.model
 
 import com.google.gson.annotations.SerializedName
 import com.lnavarro.rickmorty.domain.model.CharacterDomain
+import com.lnavarro.rickmorty.domain.model.CharacterSpecies
 
 data class CharacterModel(
     val id: Int,
@@ -33,11 +34,20 @@ fun CharacterModel.toDomain(): CharacterDomain {
         id = id,
         name = name,
         status = status,
-        species = species,
+        species = parseSpecies(species),
         gender = gender,
         origin = origin.name,
         location = location.name,
         image = image,
         episodesCount = episode.size
     )
+}
+
+fun parseSpecies(speciesString: String?): CharacterSpecies {
+    return when (speciesString?.lowercase()) {
+        "human" -> CharacterSpecies.HUMAN
+        "humanoid" -> CharacterSpecies.HUMANOID
+        "alien" -> CharacterSpecies.ALIEN
+        else -> CharacterSpecies.UNKNOWN
+    }
 }

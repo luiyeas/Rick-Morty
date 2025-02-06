@@ -10,7 +10,8 @@ interface RickAndMortyApiClient {
     @GET("/api/character/")
     @Headers("Content-Type: application/json", "Accept: application/json")
     suspend fun getAllCharacters(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("species") status: String? = null
     ): CharacterResponseModel
 
 }
