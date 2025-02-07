@@ -16,9 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,6 +49,7 @@ fun CharacterListScreen(
     val selectedFilter: CharacterSpecies? by characterListViewModel.selectedFilter.observeAsState(
         initial = null
     )
+    val searchText: String? by characterListViewModel.searchText.observeAsState(initial = null)
 
     Box(
         modifier = modifier
@@ -54,7 +58,9 @@ fun CharacterListScreen(
         contentAlignment = Alignment.Center
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
+            SearchBar(searchText) {
+                characterListViewModel.onSearchValueChange(it)
+            }
             FilterCharacters(selectedFilter, onHumanoidFilterClick = {
                 characterListViewModel.onHumanoidClick()
             }, onUnknownFilterClick = {
@@ -68,8 +74,7 @@ fun CharacterListScreen(
             when (characters.loadState.refresh) {
                 is LoadState.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator()
                     }
@@ -78,9 +83,14 @@ fun CharacterListScreen(
                 is LoadState.Error -> {
                     val errorMessage =
                         (characters.loadState.refresh as LoadState.Error).error.localizedMessage
-                    Text(
-                        text = "Error: $errorMessage", color = Color.Red, fontSize = 18.sp
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Error: $errorMessage", color = Color.Red, fontSize = 18.sp
+                        )
+                    }
+
                 }
 
                 else -> {
@@ -88,6 +98,35 @@ fun CharacterListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SearchBar(searchText: String?, onValueChange: (String) -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .background(RickColor)
+    ) {
+        OutlinedTextField(modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            value = searchText.orEmpty(),
+            maxLines = 1,
+            placeholder = {
+                Text(text = "Search humans, aliens or whatever...", color = Color.White)
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                cursorColor = Color.White,
+                focusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White,
+                unfocusedSupportingTextColor = Color.Gray
+            ),
+            onValueChange = {
+                onValueChange(it)
+            })
     }
 }
 

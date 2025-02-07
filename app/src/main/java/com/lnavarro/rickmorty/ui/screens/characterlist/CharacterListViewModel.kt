@@ -3,6 +3,7 @@ package com.lnavarro.rickmorty.ui.screens.characterlist
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -16,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -28,18 +30,30 @@ class CharacterListViewModel @Inject constructor(
 
     // StateFlow to hold the current status filter
     private val _statusFilter = MutableStateFlow<String?>(null)
-    val statusFilter: StateFlow<String?> = _statusFilter
 
     private val _selectedFilter = MutableLiveData<CharacterSpecies?>(null)
     var selectedFilter: LiveData<CharacterSpecies?> = _selectedFilter
 
+    private val _searchText = MutableLiveData<String?>(null)
+    var searchText: LiveData<String?> = _searchText
+
     // UI State with sealed class
     // Characters flow that depends on the statusFilter
     @OptIn(ExperimentalCoroutinesApi::class)
-    val characters: StateFlow<PagingData<CharacterUI>> = _statusFilter.flatMapLatest { filter ->
-        getCharactersUseCase(filter).map { pagingData -> pagingData.map { it.toUI() } }
-    }.cachedIn(viewModelScope)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
+    val characters: StateFlow<PagingData<CharacterUI>> = combine(
+        _statusFilter, _searchText.asFlow()
+    ) { statusFilter, searchText ->
+        // Combine two values in one
+        statusFilter to searchText
+    }.flatMapLatest { (statusFilter, searchText) ->
+        getCharactersUseCase(
+            statusFilter, searchText
+        ).map { pagingData -> pagingData.map { it.toUI() } }
+    }.cachedIn(viewModelScope).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = PagingData.empty()
+    )
 
     private fun toggleFilter(species: CharacterSpecies) {
         if (_selectedFilter.value == species) {
@@ -58,5 +72,9 @@ class CharacterListViewModel @Inject constructor(
     fun onUnknownClick() = toggleFilter(CharacterSpecies.UNKNOWN)
 
     fun onAlienClick() = toggleFilter(CharacterSpecies.ALIEN)
+
+    fun onSearchValueChange(searchText: String) {
+        _searchText.value = searchText.ifEmpty { null }
+    }
 
 }

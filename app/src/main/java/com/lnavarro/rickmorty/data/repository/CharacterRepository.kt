@@ -22,9 +22,9 @@ class CharacterRepository @Inject constructor(private val apiService: RickAndMor
         pageSize = PAGE_SIZE, prefetchDistance = PREFETCH_DISTANCE, enablePlaceholders = false
     )
 
-    fun getCharactersPaged(status: String?): Flow<PagingData<CharacterDomain>> {
+    fun getCharactersPaged(status: String?, name: String?): Flow<PagingData<CharacterDomain>> {
         return Pager(config = pagingConfig,
-            pagingSourceFactory = { CharacterPagingSource(apiService, status) }).flow
+            pagingSourceFactory = { CharacterPagingSource(apiService, status, name) }).flow
     }
 
 }

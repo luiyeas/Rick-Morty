@@ -9,13 +9,14 @@ import javax.inject.Inject
 
 class CharacterPagingSource @Inject constructor(
     private val apiService: RickAndMortyApiClient,
-    private val status: String?) :
+    private val status: String?,
+    private val name: String?) :
     PagingSource<Int, CharacterDomain>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CharacterDomain> {
         return try {
             val page = params.key ?: 1
-            val response = apiService.getAllCharacters(page, status)
+            val response = apiService.getAllCharacters(page, status, name)
             val characters = response.characters.map { it.toDomain() }
             LoadResult.Page(
                 data = characters,
