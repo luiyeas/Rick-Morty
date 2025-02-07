@@ -53,30 +53,37 @@ fun CharacterListScreen(
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        when (characters.loadState.refresh) {
-            is LoadState.Loading -> {
-                CircularProgressIndicator()
-            }
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            is LoadState.Error -> {
-                val errorMessage =
-                    (characters.loadState.refresh as LoadState.Error).error.localizedMessage
-                Text(
-                    text = "Error: $errorMessage", color = Color.Red, fontSize = 18.sp
-                )
-            }
+            FilterCharacters(selectedFilter, onHumanoidFilterClick = {
+                characterListViewModel.onHumanoidClick()
+            }, onUnknownFilterClick = {
+                characterListViewModel.onUnknownClick()
+            }, onAlienFilterClick = {
+                characterListViewModel.onAlienClick()
+            }, onHumanFilterClick = {
+                characterListViewModel.onHumanClick()
+            })
 
-            else -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    FilterCharacters(selectedFilter, onHumanoidFilterClick = {
-                        characterListViewModel.onHumanoidClick()
-                    }, onUnknownFilterClick = {
-                        characterListViewModel.onUnknownClick()
-                    }, onAlienFilterClick = {
-                        characterListViewModel.onAlienClick()
-                    }, onHumanFilterClick = {
-                        characterListViewModel.onHumanClick()
-                    })
+            when (characters.loadState.refresh) {
+                is LoadState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                is LoadState.Error -> {
+                    val errorMessage =
+                        (characters.loadState.refresh as LoadState.Error).error.localizedMessage
+                    Text(
+                        text = "Error: $errorMessage", color = Color.Red, fontSize = 18.sp
+                    )
+                }
+
+                else -> {
                     CharacterList(characters)
                 }
             }
@@ -90,13 +97,12 @@ fun FilterCharacters(
     onHumanoidFilterClick: () -> Unit,
     onHumanFilterClick: () -> Unit,
     onAlienFilterClick: () -> Unit,
-    onUnknownFilterClick: () -> Unit,
-
-    ) {
+    onUnknownFilterClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(60.dp)
             .horizontalScroll(rememberScrollState())
             .background(RickColor)
             .padding(horizontal = 12.dp),
@@ -104,12 +110,9 @@ fun FilterCharacters(
     ) {
 
         Button(
-            onClick = { onHumanFilterClick() },
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 20.dp,
-                pressedElevation = 0.dp
-            ),
-            colors = ButtonDefaults.buttonColors(
+            onClick = { onHumanFilterClick() }, elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 20.dp, pressedElevation = 0.dp
+            ), colors = ButtonDefaults.buttonColors(
                 containerColor = if (selectedFilter == CharacterSpecies.HUMAN) Color.White else RickColor,
                 contentColor = if (selectedFilter == CharacterSpecies.HUMAN) RickColor else Color.White
             )
@@ -124,7 +127,7 @@ fun FilterCharacters(
                 onAlienFilterClick()
             }, elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 20.dp, pressedElevation = 0.dp
-            ),  colors = ButtonDefaults.buttonColors(
+            ), colors = ButtonDefaults.buttonColors(
                 containerColor = if (selectedFilter == CharacterSpecies.ALIEN) Color.White else RickColor,
                 contentColor = if (selectedFilter == CharacterSpecies.ALIEN) RickColor else Color.White
             )
@@ -139,7 +142,7 @@ fun FilterCharacters(
                 onHumanoidFilterClick()
             }, elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 20.dp, pressedElevation = 0.dp
-            ),  colors = ButtonDefaults.buttonColors(
+            ), colors = ButtonDefaults.buttonColors(
                 containerColor = if (selectedFilter == CharacterSpecies.HUMANOID) Color.White else RickColor,
                 contentColor = if (selectedFilter == CharacterSpecies.HUMANOID) RickColor else Color.White
             )
@@ -150,11 +153,9 @@ fun FilterCharacters(
         Spacer(modifier = Modifier.width(12.dp))
 
         Button(
-            onClick = { onUnknownFilterClick() },
-            elevation = ButtonDefaults.buttonElevation(
+            onClick = { onUnknownFilterClick() }, elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 20.dp, pressedElevation = 0.dp
-            ),
-            colors = ButtonDefaults.buttonColors(
+            ), colors = ButtonDefaults.buttonColors(
                 containerColor = if (selectedFilter == CharacterSpecies.UNKNOWN) Color.White else RickColor,
                 contentColor = if (selectedFilter == CharacterSpecies.UNKNOWN) RickColor else Color.White
             )

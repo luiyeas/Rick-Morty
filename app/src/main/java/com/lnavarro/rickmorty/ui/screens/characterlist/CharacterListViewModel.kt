@@ -41,24 +41,22 @@ class CharacterListViewModel @Inject constructor(
     }.cachedIn(viewModelScope)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 
-    fun onHumanoidClick() {
-        _statusFilter.value = CharacterSpecies.HUMANOID.value
-        _selectedFilter.value = CharacterSpecies.HUMANOID
+    private fun toggleFilter(species: CharacterSpecies) {
+        if (_selectedFilter.value == species) {
+            _statusFilter.value = null
+            _selectedFilter.value = null
+        } else {
+            _statusFilter.value = species.value
+            _selectedFilter.value = species
+        }
     }
 
-    fun onHumanClick() {
-        _statusFilter.value = CharacterSpecies.HUMAN.value
-        _selectedFilter.value = CharacterSpecies.HUMAN
-    }
+    fun onHumanoidClick() = toggleFilter(CharacterSpecies.HUMANOID)
 
-    fun onUnknownClick() {
-        _statusFilter.value = CharacterSpecies.UNKNOWN.value
-        _selectedFilter.value = CharacterSpecies.UNKNOWN
-    }
+    fun onHumanClick() = toggleFilter(CharacterSpecies.HUMAN)
 
-    fun onAlienClick() {
-        _statusFilter.value = CharacterSpecies.ALIEN.value
-        _selectedFilter.value = CharacterSpecies.ALIEN
-    }
+    fun onUnknownClick() = toggleFilter(CharacterSpecies.UNKNOWN)
+
+    fun onAlienClick() = toggleFilter(CharacterSpecies.ALIEN)
 
 }
