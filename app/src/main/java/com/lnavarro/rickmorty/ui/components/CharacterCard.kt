@@ -36,14 +36,15 @@ import com.lnavarro.rickmorty.ui.theme.SecondaryText
 val pixelFont = FontFamily(Font(R.font.pressstartregular))
 
 @Composable
-fun CharacterCard(characterUI: CharacterUI) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+fun CharacterCard(characterUI: CharacterUI, onCharacterClick: (Int) -> Unit) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = {
+            onCharacterClick(characterUI.id)
+        }) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -87,8 +88,7 @@ fun CharacterCard(characterUI: CharacterUI) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = getKindOfLive(characterUI.species),
-                        fontSize = 14.sp
+                        text = getKindOfLive(characterUI.species), fontSize = 14.sp
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(

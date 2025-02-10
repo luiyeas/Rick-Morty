@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.paging.compose)
     implementation(libs.paging.common)
     implementation(libs.viewmodel)
+    implementation(libs.hilt.navigation)
+    implementation(libs.compose.navigation)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)

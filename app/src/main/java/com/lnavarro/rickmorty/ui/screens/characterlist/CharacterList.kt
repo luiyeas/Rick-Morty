@@ -43,7 +43,8 @@ import com.lnavarro.rickmorty.ui.theme.RickColor
 
 @Composable
 fun CharacterListScreen(
-    modifier: Modifier, characterListViewModel: CharacterListViewModel
+    characterListViewModel: CharacterListViewModel,
+    onCharacterClick: (Int) -> Unit
 ) {
     val characters = characterListViewModel.characters.collectAsLazyPagingItems()
     val selectedFilter: CharacterSpecies? by characterListViewModel.selectedFilter.observeAsState(
@@ -52,7 +53,7 @@ fun CharacterListScreen(
     val searchText: String? by characterListViewModel.searchText.observeAsState(initial = null)
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
         contentAlignment = Alignment.Center
@@ -94,7 +95,7 @@ fun CharacterListScreen(
                 }
 
                 else -> {
-                    CharacterList(characters)
+                    CharacterList(characters, onCharacterClick)
                 }
             }
         }
@@ -205,7 +206,7 @@ fun FilterCharacters(
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<CharacterUI>) {
+fun CharacterList(characters: LazyPagingItems<CharacterUI>, onCharacterClick: (Int) -> Unit) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
@@ -214,7 +215,7 @@ fun CharacterList(characters: LazyPagingItems<CharacterUI>) {
     ) {
         items(characters.itemCount) { index ->
             val character = characters[index]
-            character?.let { CharacterCard(characterUI = it) }
+            character?.let { CharacterCard(characterUI = it, onCharacterClick) }
         }
 
         when (characters.loadState.append) {
