@@ -24,13 +24,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.SavedStateHandle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import com.lnavarro.rickmorty.domain.model.CharacterSpecies
 import com.lnavarro.rickmorty.ui.components.getStatusColor
 import com.lnavarro.rickmorty.ui.components.pixelFont
+import com.lnavarro.rickmorty.ui.model.CharacterUI
 import com.lnavarro.rickmorty.ui.theme.RickColor
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun CharacterDetailScreen(
@@ -99,4 +107,25 @@ fun PropertyRow(label: String, value: String, color: Color = Color.Black) {
         Text(text = value, style = MaterialTheme.typography.bodyLarge, fontFamily = pixelFont, color = color)
     }
     Spacer(modifier = Modifier.height(8.dp))
+}
+
+@Preview
+@Composable
+fun CharacterDetailScreenPreview() {
+    val sampleCharacter = CharacterUI(
+        id = 1,
+        name = "Rick Sanchez",
+        status = "Alive",
+        species = CharacterSpecies.HUMAN,
+        image = "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
+    )
+    val characterJson = Json.encodeToString(CharacterUI.serializer(), sampleCharacter)
+    val encodedCharacterJson = URLEncoder.encode(characterJson, StandardCharsets.UTF_8.toString())
+
+    val savedStateHandle = SavedStateHandle().apply {
+        set("characterJson", encodedCharacterJson)
+    }
+    val mockViewModel = CharacterDetailViewModel(savedStateHandle)
+
+    CharacterDetailScreen(characterDetailViewModel = mockViewModel, onBackClick = {})
 }
