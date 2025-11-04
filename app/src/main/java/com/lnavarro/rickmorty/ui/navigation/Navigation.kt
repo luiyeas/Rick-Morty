@@ -11,6 +11,7 @@ import com.lnavarro.rickmorty.ui.screens.characterdetail.CharacterDetailScreen
 import com.lnavarro.rickmorty.ui.screens.characterdetail.CharacterDetailViewModel
 import com.lnavarro.rickmorty.ui.screens.characterlist.CharacterListScreen
 import com.lnavarro.rickmorty.ui.screens.characterlist.CharacterListViewModel
+import kotlinx.serialization.json.Json
 
 sealed class Screen(val route: String) {
     data object CharacterList : Screen("characterList")
@@ -29,7 +30,7 @@ fun RickAndMortyNavHost(
             val listViewModel = hiltViewModel<CharacterListViewModel>()
             CharacterListScreen(characterListViewModel = listViewModel,
                 onCharacterClick = { characterUI ->
-                    val characterJson = Json.encodeToString(characterUI)
+                    val characterJson = Json.encodeToString(CharacterUI.serializer(), characterUI)
                     navController.navigate("${Screen.CharacterDetail.route}/$characterJson")
                 })
         }
