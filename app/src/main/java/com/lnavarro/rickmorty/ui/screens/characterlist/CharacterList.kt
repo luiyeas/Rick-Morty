@@ -40,11 +40,13 @@ import com.lnavarro.rickmorty.domain.model.CharacterSpecies
 import com.lnavarro.rickmorty.ui.components.CharacterCard
 import com.lnavarro.rickmorty.ui.model.CharacterUI
 import com.lnavarro.rickmorty.ui.theme.RickColor
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun CharacterListScreen(
     characterListViewModel: CharacterListViewModel,
-    onCharacterClick: (Int) -> Unit
+    onCharacterClick: (CharacterUI) -> Unit
 ) {
     val characters = characterListViewModel.characters.collectAsLazyPagingItems()
     val selectedFilter: CharacterSpecies? by characterListViewModel.selectedFilter.observeAsState(
@@ -206,7 +208,7 @@ fun FilterCharacters(
 }
 
 @Composable
-fun CharacterList(characters: LazyPagingItems<CharacterUI>, onCharacterClick: (Int) -> Unit) {
+fun CharacterList(characters: LazyPagingItems<CharacterUI>, onCharacterClick: (CharacterUI) -> Unit) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
@@ -215,7 +217,9 @@ fun CharacterList(characters: LazyPagingItems<CharacterUI>, onCharacterClick: (I
     ) {
         items(characters.itemCount) { index ->
             val character = characters[index]
-            character?.let { CharacterCard(characterUI = it, onCharacterClick) }
+            character?.let { CharacterCard(characterUI = it, onCharacterClick = { characterUI ->
+                onCharacterClick(characterUI)
+            }) }
         }
 
         when (characters.loadState.append) {

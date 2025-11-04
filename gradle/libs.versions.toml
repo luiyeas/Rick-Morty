@@ -20,10 +20,11 @@ hilt-test = "2.44"
 archCoreTesting = "2.1.0"
 viewModel = "1.7.6"
 navigation = "2.8.6"
-
+kotlinxSerializationJson = "1.6.3"
 
 
 [libraries]
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

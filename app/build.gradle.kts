@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hiltAndroid)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -63,6 +64,7 @@ dependencies {
     implementation(libs.viewmodel)
     implementation(libs.hilt.navigation)
     implementation(libs.compose.navigation)
+    implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)

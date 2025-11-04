@@ -28,19 +28,21 @@ fun RickAndMortyNavHost(
         composable(route = Screen.CharacterList.route) {
             val listViewModel = hiltViewModel<CharacterListViewModel>()
             CharacterListScreen(characterListViewModel = listViewModel,
-                onCharacterClick = { characterId ->
-                    navController.navigate("${Screen.CharacterDetail.route}/$characterId")
+                onCharacterClick = { characterUI ->
+                    val characterJson = Json.encodeToString(characterUI)
+                    navController.navigate("${Screen.CharacterDetail.route}/$characterJson")
                 })
         }
         composable(
-            route = "${Screen.CharacterDetail.route}/{characterId}",
-            arguments = listOf(navArgument("characterId") {
-                type = NavType.IntType
+            route = "${Screen.CharacterDetail.route}/{characterJson}",
+            arguments = listOf(navArgument("characterJson") {
+                type = NavType.StringType
             })
         ) { backStackEntry ->
             val detailViewModel = hiltViewModel<CharacterDetailViewModel>(backStackEntry)
             CharacterDetailScreen(
-                characterDetailViewModel = detailViewModel
+                characterDetailViewModel = detailViewModel,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
