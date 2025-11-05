@@ -5,6 +5,13 @@ Todas las novedades de RickAndMortyCatalog siguen el estándar Semantic Versioni
 ## [Unreleased]
 - Pendiente de nuevas funcionalidades aprobadas para integrar en `develop`.
 
+## [v1.1.0] - 2025-11-05
+### Añadido
+- Vista previa completa de `CharacterListScreen` con datos simulados y estados de filtro para acelerar las revisiones de UI.
+
+### Cambiado
+- Refactorización de `CharacterListScreen` para reutilizar la lógica en previews y evitar dependencias directas de `ViewModel`.
+
 ## [v1.0.0] - 2025-11-05
 ### Añadido
 - Listado principal de personajes en Jetpack Compose con soporte de Paging 3 y carga remota desde la API oficial.
