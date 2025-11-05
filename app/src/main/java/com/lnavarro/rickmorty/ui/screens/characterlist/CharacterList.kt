@@ -25,14 +25,17 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.lnavarro.rickmorty.R
@@ -40,8 +43,7 @@ import com.lnavarro.rickmorty.domain.model.CharacterSpecies
 import com.lnavarro.rickmorty.ui.components.CharacterCard
 import com.lnavarro.rickmorty.ui.model.CharacterUI
 import com.lnavarro.rickmorty.ui.theme.RickColor
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun CharacterListScreen(
@@ -54,6 +56,32 @@ fun CharacterListScreen(
     )
     val searchText: String? by characterListViewModel.searchText.observeAsState(initial = null)
 
+    CharacterListScreenContent(
+        characters = characters,
+        selectedFilter = selectedFilter,
+        searchText = searchText,
+        onSearchValueChange = { characterListViewModel.onSearchValueChange(it) },
+        onHumanoidFilterClick = { characterListViewModel.onHumanoidClick() },
+        onUnknownFilterClick = { characterListViewModel.onUnknownClick() },
+        onAlienFilterClick = { characterListViewModel.onAlienClick() },
+        onHumanFilterClick = { characterListViewModel.onHumanClick() },
+        onCharacterClick = onCharacterClick
+    )
+}
+
+@Composable
+private fun CharacterListScreenContent(
+    characters: LazyPagingItems<CharacterUI>,
+    selectedFilter: CharacterSpecies?,
+    searchText: String?,
+    onSearchValueChange: (String) -> Unit,
+    onHumanoidFilterClick: () -> Unit,
+    onUnknownFilterClick: () -> Unit,
+    onAlienFilterClick: () -> Unit,
+    onHumanFilterClick: () -> Unit,
+    onCharacterClick: (CharacterUI) -> Unit,
+    previewCharacters: List<CharacterUI>? = null
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -61,47 +89,116 @@ fun CharacterListScreen(
         contentAlignment = Alignment.Center
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            SearchBar(searchText) {
-                characterListViewModel.onSearchValueChange(it)
-            }
-            FilterCharacters(selectedFilter, onHumanoidFilterClick = {
-                characterListViewModel.onHumanoidClick()
-            }, onUnknownFilterClick = {
-                characterListViewModel.onUnknownClick()
-            }, onAlienFilterClick = {
-                characterListViewModel.onAlienClick()
-            }, onHumanFilterClick = {
-                characterListViewModel.onHumanClick()
-            })
+            SearchBar(searchText) { onSearchValueChange(it) }
+            FilterCharacters(selectedFilter,
+                onHumanoidFilterClick = { onHumanoidFilterClick() },
+                onUnknownFilterClick = { onUnknownFilterClick() },
+                onAlienFilterClick = { onAlienFilterClick() },
+                onHumanFilterClick = { onHumanFilterClick() })
 
-            when (characters.loadState.refresh) {
-                is LoadState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                is LoadState.Error -> {
-                    val errorMessage =
-                        (characters.loadState.refresh as LoadState.Error).error.localizedMessage
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Error: $errorMessage", color = Color.Red, fontSize = 18.sp
-                        )
+            if (previewCharacters != null) {
+                CharacterListPreview(
+                    characters = previewCharacters,
+                    onCharacterClick = onCharacterClick
+                )
+            } else {
+                when (characters.loadState.refresh) {
+                    is LoadState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
 
-                }
+                    is LoadState.Error -> {
+                        val errorMessage =
+                            (characters.loadState.refresh as LoadState.Error).error.localizedMessage
+                        Box(
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Error: $errorMessage", color = Color.Red, fontSize = 18.sp
+                            )
+                        }
 
-                else -> {
-                    CharacterList(characters, onCharacterClick)
+                    }
+
+                    else -> {
+                        CharacterList(characters, onCharacterClick)
+                    }
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true, name = "Character List Screen")
+@Composable
+fun CharacterListScreenPreview() {
+    val fakeCharacters = rememberPreviewCharacters()
+    CharacterListScreenContent(
+        characters = fakeCharacters,
+        selectedFilter = null,
+        searchText = null,
+        onSearchValueChange = {},
+        onHumanoidFilterClick = {},
+        onUnknownFilterClick = {},
+        onAlienFilterClick = {},
+        onHumanFilterClick = {},
+        onCharacterClick = {}
+    )
+}
+
+@Preview(showBackground = true, name = "Character List Screen - List Loaded")
+@Composable
+fun CharacterListScreenLoadedPreview() {
+    val fakeCharacters = rememberPreviewCharacters()
+    CharacterListScreenContent(
+        characters = fakeCharacters,
+        selectedFilter = CharacterSpecies.HUMAN,
+        searchText = "Rick",
+        onSearchValueChange = {},
+        onHumanoidFilterClick = {},
+        onUnknownFilterClick = {},
+        onAlienFilterClick = {},
+        onHumanFilterClick = {},
+        onCharacterClick = {},
+        previewCharacters = previewCharactersSample
+    )
+}
+
+private val previewCharactersSample = listOf(
+    CharacterUI(
+        id = 1,
+        name = "Rick Sanchez",
+        status = "Alive",
+        species = CharacterSpecies.HUMAN,
+        image = "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
+    ),
+    CharacterUI(
+        id = 2,
+        name = "Morty Smith",
+        status = "Alive",
+        species = CharacterSpecies.HUMAN,
+        image = "https://rickandmortyapi.com/api/character/avatar/2.jpeg"
+    ),
+    CharacterUI(
+        id = 3,
+        name = "Krombopulos Michael",
+        status = "Dead",
+        species = CharacterSpecies.ALIEN,
+        image = "https://rickandmortyapi.com/api/character/avatar/157.jpeg"
+    )
+)
+
+@Composable
+private fun rememberPreviewCharacters(): LazyPagingItems<CharacterUI> {
+    val fakeCharactersFlow = remember {
+        flowOf(PagingData.empty<CharacterUI>())
+    }
+
+    return fakeCharactersFlow.collectAsLazyPagingItems()
 }
 
 @Composable
@@ -232,6 +329,27 @@ fun CharacterList(characters: LazyPagingItems<CharacterUI>, onCharacterClick: (C
             }
 
             else -> {}
+        }
+    }
+}
+
+@Composable
+private fun CharacterListPreview(
+    characters: List<CharacterUI>,
+    onCharacterClick: (CharacterUI) -> Unit
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(horizontal = 8.dp)
+    ) {
+        items(characters.size) { index ->
+            val character = characters[index]
+            CharacterCard(
+                characterUI = character,
+                onCharacterClick = { onCharacterClick(it) }
+            )
         }
     }
 }
